@@ -18,22 +18,30 @@ const sections = [
   { id: 'oculta', type: 'contact', enabled: false, navLabel: 'Oculta' },
 ] as Section[];
 
-let observerCallback: IntersectionObserverCallback;
-const observe = vi.fn();
-const disconnect = vi.fn();
+let animationFrameCallback: FrameRequestCallback | undefined;
+const originalScrollY = Object.getOwnPropertyDescriptor(window, 'scrollY');
+const originalInnerHeight = Object.getOwnPropertyDescriptor(window, 'innerHeight');
+const originalScrollHeight = Object.getOwnPropertyDescriptor(document.documentElement, 'scrollHeight');
 
 beforeEach(() => {
-  observe.mockClear();
-  disconnect.mockClear();
-  vi.stubGlobal('IntersectionObserver', vi.fn(function (callback: IntersectionObserverCallback) {
-    observerCallback = callback;
-    return { observe, disconnect };
-  }));
+  animationFrameCallback = undefined;
+  vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+    animationFrameCallback = callback;
+    return 1;
+  });
+  vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {});
+  Object.defineProperty(window, 'scrollY', { configurable: true, value: 0 });
+  Object.defineProperty(window, 'innerHeight', { configurable: true, value: 1000 });
+  Object.defineProperty(document.documentElement, 'scrollHeight', { configurable: true, value: 3000 });
 });
 
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+  if (originalScrollY) Object.defineProperty(window, 'scrollY', originalScrollY);
+  if (originalInnerHeight) Object.defineProperty(window, 'innerHeight', originalInnerHeight);
+  if (originalScrollHeight) Object.defineProperty(document.documentElement, 'scrollHeight', originalScrollHeight);
   document.body.style.overflow = '';
 });
 
@@ -79,7 +87,7 @@ describe('Header', () => {
     expect(document.activeElement).toBe(open);
   });
 
-  it('marca a seção visível e observa apenas as seções do menu', () => {
+  it('marca a seção conforme a linha de referência e o fim da página', () => {
     for (const section of sections) {
       const element = document.createElement('section');
       element.id = section.id;
@@ -87,18 +95,35 @@ describe('Header', () => {
     }
 
     render(<Header brand={brand} sections={sections} />);
-    expect(observe.mock.calls.map(([element]) => (element as HTMLElement).id)).toEqual(['inicio', 'sobre', 'recursos']);
-    expect(vi.mocked(IntersectionObserver).mock.calls[0]?.[1]).toMatchObject({ rootMargin: '-25% 0px -45% 0px' });
-
-    act(() => {
-      observerCallback([
-        { target: document.getElementById('sobre')!, isIntersecting: true, intersectionRatio: 0.5 },
-      ] as unknown as IntersectionObserverEntry[], {} as IntersectionObserver);
-    });
-
     const desktop = screen.getByRole('navigation', { name: 'Navegação principal' });
-    expect(within(desktop).getByRole('link', { name: 'Sobre' }).getAttribute('aria-current')).toBe('location');
-    expect(within(desktop).getByRole('link', { name: 'Início' }).getAttribute('aria-current')).toBeNull();
+    const runFrame = () => {
+      const callback = animationFrameCallback;
+      animationFrameCallback = undefined;
+      act(() => callback?.(0));
+    };
+    const setTop = (id: string, top: number) => {
+      vi.spyOn(document.getElementById(id)!, 'getBoundingClientRect').mockReturnValue({ top } as DOMRect);
+    };
+    const activeLabel = () => within(desktop).getAllByRole('link')
+      .find((link) => link.getAttribute('aria-current') === 'location')?.textContent;
+
+    setTop('inicio', 600);
+    setTop('sobre', 800);
+    setTop('recursos', 1000);
+    runFrame();
+    expect(activeLabel()).toBe('Início');
+
+    setTop('inicio', -700);
+    setTop('sobre', 200);
+    setTop('recursos', 500);
+    fireEvent.scroll(window);
+    runFrame();
+    expect(activeLabel()).toBe('Sobre');
+
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 2000 });
+    fireEvent.scroll(window);
+    runFrame();
+    expect(activeLabel()).toBe('Recursos');
 
     for (const section of sections) document.getElementById(section.id)?.remove();
   });

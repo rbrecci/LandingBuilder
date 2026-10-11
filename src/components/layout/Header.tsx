@@ -18,20 +18,38 @@ export function Header({ brand, sections }: { brand: Content['brand']; sections:
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   useEffect(() => {
-    if (typeof IntersectionObserver === 'undefined') return;
+    const elements = navItems
+      .map((item) => document.getElementById(item.id))
+      .filter((element): element is HTMLElement => element !== null);
+    let frame: number | null = null;
 
-    const observer = new IntersectionObserver((entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-      if (visible[0]) setActiveSection(visible[0].target.id);
-    }, { rootMargin: '-25% 0px -45% 0px', threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] });
+    const updateActiveSection = () => {
+      frame = null;
+      if (elements.length === 0) return;
 
-    for (const item of navItems) {
-      const element = document.getElementById(item.id);
-      if (element) observer.observe(element);
-    }
-    return () => observer.disconnect();
+      const atPageEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight;
+      if (atPageEnd) {
+        setActiveSection(elements[elements.length - 1].id);
+        return;
+      }
+
+      const reference = window.innerHeight * 0.4;
+      const passed = elements.filter((element) => element.getBoundingClientRect().top <= reference);
+      setActiveSection((passed[passed.length - 1] ?? elements[0]).id);
+    };
+    const scheduleUpdate = () => {
+      if (frame === null) frame = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate, { passive: true });
+    scheduleUpdate();
+
+    return () => {
+      window.removeEventListener('scroll', scheduleUpdate);
+      window.removeEventListener('resize', scheduleUpdate);
+      if (frame !== null) window.cancelAnimationFrame(frame);
+    };
   }, [navItems]);
 
   return (
