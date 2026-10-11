@@ -20,8 +20,11 @@
 }
 
 .section-shell__header {
-  max-inline-size: 52rem;
   margin-block-end: clamp(2rem, 5vw, 4rem);
+}
+
+.section-shell__header h2 {
+  max-inline-size: 52rem;
 }
 
 .section-shell__meta {

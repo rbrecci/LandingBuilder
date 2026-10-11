@@ -29,8 +29,7 @@ export function Footer({ brand, business, footer }: FooterProps) {
             {business.address && (
               <span>
                 {business.address.street}, {business.address.district}<br />
-                {business.address.city}, {business.address.region} {business.address.postalCode}<br />
-                {business.address.country}
+                {business.address.city}, {business.address.region} {business.address.postalCode}, {business.address.country}
               </span>
             )}
             {business.phone && <a href={`tel:${business.phone}`}>{business.phone}</a>}

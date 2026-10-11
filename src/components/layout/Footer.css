@@ -1,15 +1,15 @@
 .site-footer {
   background: var(--surface-dark-bg);
   color: var(--surface-dark-fg);
-  padding: clamp(3rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4rem) 2rem;
+  padding-block: clamp(3rem, 6vw, 5rem) 2rem;
 }
 
 .site-footer__main {
   display: grid;
   gap: 2rem;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-  margin: 0 auto;
-  max-width: 80rem;
+  inline-size: min(100% - 2 * clamp(1rem, 4vw, 3rem), 76rem);
+  margin-inline: auto;
 }
 
 .site-footer__brand {
@@ -36,6 +36,7 @@
 
 .site-footer__contact,
 .site-footer__links {
+  align-content: start;
   display: grid;
   font-style: normal;
   gap: 0.75rem;
@@ -57,7 +58,7 @@
   flex-wrap: wrap;
   gap: 1rem 2rem;
   justify-content: space-between;
+  inline-size: min(100% - 2 * clamp(1rem, 4vw, 3rem), 76rem);
   margin: 3rem auto 0;
-  max-width: 80rem;
   padding-top: 1.5rem;
 }

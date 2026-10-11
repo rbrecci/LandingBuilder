@@ -61,6 +61,23 @@ describe('Footer', () => {
     expect(screen.getByText('Desenvolvido por', { exact: false }).textContent).toBe('Desenvolvido por RBrecci')
   })
 
+  it('mantém o país na mesma linha da cidade no endereço', () => {
+    const { container } = render(<Footer brand={brand} business={business} footer={footer} />)
+    const contact = container.querySelector('.site-footer__contact')
+
+    expect(contact).toBeTruthy()
+    expect(contact?.textContent).toContain('São Paulo, SP 01000-000, Brasil')
+
+    const lines = contact?.innerHTML
+      .replace(/<br\s*\/?\s*>/gi, '\n')
+      .replace(/<[^>]*>/g, '')
+      .split('\n')
+      .map((line) => line.trim())
+
+    expect(lines).not.toContain('Brasil')
+    expect(Array.from(contact?.querySelectorAll('*') ?? []).some((element) => element.textContent?.trim() === 'Brasil')).toBe(false)
+  })
+
   it('inclui o link de crédito no HTML renderizado no servidor', () => {
     const html = renderToString(<Footer brand={brand} business={business} footer={footer} />)
 
