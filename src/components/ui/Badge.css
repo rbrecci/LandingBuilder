@@ -1,5 +1,8 @@
 .badge {
   display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  align-self: flex-start;
   align-items: center;
   border-radius: var(--radius);
   background: var(--surface-accent-bg);
@@ -9,4 +12,9 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.section-shell.tone-accent .badge {
+  background: var(--surface-dark-bg);
+  color: var(--surface-dark-fg);
 }
