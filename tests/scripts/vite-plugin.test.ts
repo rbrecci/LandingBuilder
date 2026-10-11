@@ -1,16 +1,18 @@
-import { describe, expect, it } from 'vitest'
+import { resolve } from 'node:path'
+import type { HmrContext, ModuleNode, ViteDevServer } from 'vite'
+import { describe, expect, it, vi } from 'vitest'
 import clientPlugin from '../../scripts/vite-plugin-client.ts'
 
 const theme = {
   colors: {
     paper: '#FFFFFF', ink: '#111111', brand: '#1A3A6B', brandContrast: '#FFFFFF',
     accent: '#A0290C', accentContrast: '#FFFFFF', focus: '#FFFF00',
-  },
-  surfaces: {
-    dark: { bg: '#111111', fg: '#FFFFFF' },
-    light: { bg: '#FFFFFF', fg: '#111111' },
-    brand: { bg: '#1A3A6B', fg: '#FFFFFF' },
-    accent: { bg: '#A0290C', fg: '#FFFFFF' },
+    surfaces: {
+      dark: { bg: '#111111', fg: '#FFFFFF' },
+      light: { bg: '#FFFFFF', fg: '#111111' },
+      brand: { bg: '#1A3A6B', fg: '#FFFFFF' },
+      accent: { bg: '#A0290C', fg: '#FFFFFF' },
+    },
   },
   fonts: { display: 'outfit', body: 'dm-sans' },
   radius: 'md',
@@ -65,7 +67,7 @@ const html = '<!doctype html><html lang="pt-BR"><head><!--head-meta--><title>Mod
 async function transform(contentInput: unknown = content, themeInput: unknown = theme) {
   const hook = clientPlugin({ content: contentInput, theme: themeInput }).transformIndexHtml
   if (typeof hook !== 'function') throw new Error('Hook transformIndexHtml ausente')
-  return hook(html, {} as Parameters<typeof hook>[1])
+  return hook.call({} as ThisParameterType<typeof hook>, html, {} as Parameters<typeof hook>[1])
 }
 
 describe('clientPlugin', () => {
@@ -105,6 +107,59 @@ describe('clientPlugin', () => {
       "import '@fontsource-variable/outfit/wght.css'",
       "import '@fontsource-variable/dm-sans/wght.css'",
     ])
+  })
+
+  it('expõe conteúdo validado com defaults no módulo virtual', async () => {
+    const plugin = clientPlugin({ content, theme })
+    const resolveId = plugin.resolveId as (id: string) => string | undefined
+    const load = plugin.load as (id: string) => Promise<string | undefined>
+    const id = resolveId('virtual:client-content')
+    expect(id).toBe('\0virtual:client-content')
+
+    const source = await load(id as string)
+    expect(source).toMatch(/^export default /)
+    const parsed = JSON.parse(source!.slice('export default '.length))
+    expect(parsed).toMatchObject({
+      site: { indexable: false },
+      business: { social: [], hoursConfirmed: false },
+      sections: [{
+        id: 'hero', enabled: true, tone: 'light', placeholder: false,
+        data: { layers: [], status: false, model: { interaction: 'both', mobile: 'scroll', maxTiltDeg: 18 } },
+      }],
+    })
+  })
+
+  it('rejeita conteúdo inválido ao carregar o módulo virtual', async () => {
+    const plugin = clientPlugin({ content: { ...content, site: { ...content.site, title: '' } }, theme })
+    const resolveId = plugin.resolveId as (id: string) => string | undefined
+    const load = plugin.load as (id: string) => Promise<string | undefined>
+
+    await expect(load(resolveId('virtual:client-content') as string)).rejects.toThrow('content.site.title')
+  })
+
+  it('observa content.json e invalida o módulo virtual quando ele muda', () => {
+    const plugin = clientPlugin({ content, theme })
+    const contentPath = resolve(process.cwd(), 'client', 'content.json')
+    const virtualModule = { id: '\0virtual:client-content' } as ModuleNode
+    const add = vi.fn()
+    const getModuleById = vi.fn().mockReturnValue(virtualModule)
+    const invalidateModule = vi.fn()
+    const server = {
+      watcher: { add },
+      moduleGraph: { getModuleById, invalidateModule },
+    } as unknown as ViteDevServer
+    const configureServer = plugin.configureServer as (server: ViteDevServer) => void
+    const handleHotUpdate = plugin.handleHotUpdate as (ctx: HmrContext) => ModuleNode[] | void
+
+    configureServer(server)
+    expect(add).toHaveBeenCalledWith(contentPath)
+
+    const context: HmrContext = { file: contentPath, timestamp: 123, modules: [], read: () => '', server }
+    expect(handleHotUpdate(context)).toEqual([virtualModule])
+    expect(getModuleById).toHaveBeenCalledWith('\0virtual:client-content')
+    expect(invalidateModule).toHaveBeenCalledWith(virtualModule, undefined, 123, true)
+    expect(handleHotUpdate({ ...context, file: resolve(process.cwd(), 'client', 'theme.json') })).toBeUndefined()
+    expect(invalidateModule).toHaveBeenCalledTimes(1)
   })
 
   it('aponta o caminho do campo inválido', async () => {

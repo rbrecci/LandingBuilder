@@ -3,7 +3,6 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { renderToString } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ModelConfig } from '../../src/content/schema.ts'
-import type { Capabilities } from '../../src/motion/prefs.ts'
 
 const sceneState = vi.hoisted(() => ({ imports: 0, throws: false }))
 const capabilitiesState = vi.hoisted(() => ({
@@ -15,6 +14,23 @@ const capabilitiesState = vi.hoisted(() => ({
     ready: true,
   },
 }))
+
+vi.mock('@react-three/fiber', async () => {
+  const actual = await vi.importActual<typeof import('@react-three/fiber')>('@react-three/fiber')
+  const React = await import('react')
+  return {
+    ...actual,
+    Canvas: function MockCanvas({ onCreated }: {
+      onCreated: (state: { gl: { domElement: HTMLCanvasElement }; invalidate: () => void }) => void
+    }) {
+      const canvas = React.useRef<HTMLCanvasElement>(null)
+      React.useEffect(() => {
+        if (canvas.current) onCreated({ gl: { domElement: canvas.current }, invalidate: () => undefined })
+      }, [onCreated])
+      return <canvas ref={canvas} data-testid="scene-canvas" />
+    },
+  }
+})
 
 vi.mock('../../src/motion/prefs.ts', () => ({
   useCapabilities: () => capabilitiesState.current,
@@ -67,7 +83,7 @@ class MockIntersectionObserver implements IntersectionObserver {
   constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
     this.callback = callback
     this.rootMargin = options?.rootMargin ?? ''
-    observer = this
+    observer = { emit: (visible) => this.emit(visible) }
   }
 
   observe() {}
@@ -113,6 +129,22 @@ describe('Model3D', () => {
     const html = renderToString(<Model3D config={config} alt={config.alt} mode="tilt" />)
     expect(html).toContain('/client/poster.webp')
     expect(html).not.toContain('<canvas')
+  })
+
+  it('prioriza somente o pôster solicitado no HTML inicial', () => {
+    const hero = new DOMParser().parseFromString(
+      renderToString(<Model3D config={config} alt={config.alt} mode="tilt" posterFetchPriority="high" />),
+      'text/html',
+    ).querySelector('.model-3d__poster')
+    const showcase = new DOMParser().parseFromString(
+      renderToString(<Model3D config={config} alt={config.alt} mode="orbit" />),
+      'text/html',
+    ).querySelector('.model-3d__poster')
+
+    expect(hero?.getAttribute('fetchpriority')).toBe('high')
+    expect(hero?.getAttribute('width')).toBe('500')
+    expect(hero?.getAttribute('height')).toBe('500')
+    expect(showcase?.hasAttribute('fetchpriority')).toBe(false)
   })
 
   it('não importa a cena quando o movimento está reduzido', () => {
@@ -169,4 +201,23 @@ describe('Model3D', () => {
     view.rerender(<Model3D config={config} alt={config.alt} mode="tilt" />)
     await waitFor(() => expect(screen.getByTestId('model-canvas')).toBeTruthy())
   })
+
+  it('remove os listeners do canvas quando a cena desmonta', async () => {
+    const { Scene } = await vi.importActual<typeof import('../../src/three/Scene.tsx')>(
+      '../../src/three/Scene.tsx',
+    )
+    const onContextLost = vi.fn()
+    const onContextRestored = vi.fn()
+    const view = render(
+      <Scene config={config} mode="tilt" autoRotate={false} coarsePointer={false}
+        motion={{ current: { pointerX: 0, pointerY: 0, scroll: 0, rotationDegrees: 0, hover: false } }}
+        onReady={vi.fn()} onContextLost={onContextLost} onContextRestored={onContextRestored} />,
+    )
+    const canvas = screen.getByTestId('scene-canvas')
+    view.unmount()
+    fireEvent(canvas, new Event('webglcontextlost', { cancelable: true }))
+    fireEvent(canvas, new Event('webglcontextrestored'))
+    expect(onContextLost).not.toHaveBeenCalled()
+    expect(onContextRestored).not.toHaveBeenCalled()
+  }, 20000)
 })

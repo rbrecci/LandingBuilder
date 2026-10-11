@@ -2,11 +2,10 @@ import { spawnSync } from 'node:child_process'
 import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { afterAll, describe, expect, it } from 'vitest'
 import { loadContent, loadTheme } from '../../src/content/load.ts'
 
-const root = fileURLToPath(new URL('../../', import.meta.url))
+const root = process.cwd()
 const fixture = (name: string, file: string) => resolve(root, 'tests/fixtures', name, file)
 const run = (script: string, ...args: string[]) => spawnSync(process.execPath, [resolve(root, 'scripts', script), ...args], {
   cwd: root,

@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Content, Section } from '../../src/content/schema.ts';
 import { Header } from '../../src/components/layout/Header.tsx';
@@ -25,7 +25,7 @@ const disconnect = vi.fn();
 beforeEach(() => {
   observe.mockClear();
   disconnect.mockClear();
-  vi.stubGlobal('IntersectionObserver', vi.fn((callback: IntersectionObserverCallback) => {
+  vi.stubGlobal('IntersectionObserver', vi.fn(function (callback: IntersectionObserverCallback) {
     observerCallback = callback;
     return { observe, disconnect };
   }));
@@ -90,9 +90,11 @@ describe('Header', () => {
     expect(observe.mock.calls.map(([element]) => (element as HTMLElement).id)).toEqual(['inicio', 'sobre', 'recursos']);
     expect(vi.mocked(IntersectionObserver).mock.calls[0]?.[1]).toMatchObject({ rootMargin: '-25% 0px -45% 0px' });
 
-    observerCallback([
-      { target: document.getElementById('sobre'), isIntersecting: true, intersectionRatio: 0.5 },
-    ] as IntersectionObserverEntry[], {} as IntersectionObserver);
+    act(() => {
+      observerCallback([
+        { target: document.getElementById('sobre')!, isIntersecting: true, intersectionRatio: 0.5 },
+      ] as unknown as IntersectionObserverEntry[], {} as IntersectionObserver);
+    });
 
     const desktop = screen.getByRole('navigation', { name: 'Navegação principal' });
     expect(within(desktop).getByRole('link', { name: 'Sobre' }).getAttribute('aria-current')).toBe('location');

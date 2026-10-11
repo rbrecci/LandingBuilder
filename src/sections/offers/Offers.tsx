@@ -27,7 +27,7 @@ export function Offers({ section, index, total }: { section: OffersSection; inde
                   <h3 className="offers-card__name">{item.name}</h3>
                   <p className="offers-card__price">{price}</p>
                   <p className="offers-card__unit">{item.unit}</p>
-                  {item.validUntil && <p className="offers-card__validity">Válido até {item.validUntil}</p>}
+                  {item.validUntil && <p className="offers-card__validity">{item.validUntil}</p>}
                 </article>
               </Reveal>
             </li>

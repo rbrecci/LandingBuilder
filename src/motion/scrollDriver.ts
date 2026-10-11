@@ -1,14 +1,22 @@
 export function supportsScrollTimeline(): boolean {
-  return typeof CSS !== 'undefined' && typeof CSS.supports === 'function'
+  const supportsNativeTimeline = typeof CSS !== 'undefined' && typeof CSS.supports === 'function'
     && CSS.supports('animation-timeline: view()')
     && CSS.supports('animation-range: entry')
+  if (!supportsNativeTimeline) return false
+  if (typeof document === 'undefined' || typeof window === 'undefined') return true
+  return !Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'))
+    .some((target) => hasNestedScrollContainer(target))
 }
 
 export function startScrollDriver(root: ParentNode): () => void {
-  if (typeof window === 'undefined' || supportsScrollTimeline()) return () => {}
+  if (typeof window === 'undefined') return () => {}
 
-  const targets = Array.from(root.querySelectorAll<HTMLElement>('[data-parallax]'))
+  const allTargets = Array.from(root.querySelectorAll<HTMLElement>('[data-parallax]'))
+  const targets = supportsScrollTimeline()
+    ? allTargets.filter((target) => hasNestedScrollContainer(target))
+    : allTargets
   if (targets.length === 0 || typeof IntersectionObserver === 'undefined') return () => {}
+  for (const target of targets) target.setAttribute('data-parallax-driver', '')
 
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')
   const visible = new Set<HTMLElement>()
@@ -61,5 +69,18 @@ export function startScrollDriver(root: ParentNode): () => void {
   return () => {
     reducedMotion?.removeEventListener('change', onMotionChange)
     stop()
+    for (const target of targets) target.removeAttribute('data-parallax-driver')
   }
+}
+
+function hasNestedScrollContainer(element: HTMLElement): boolean {
+  let ancestor = element.parentElement
+  while (ancestor && ancestor !== document.documentElement) {
+    const style = window.getComputedStyle(ancestor)
+    if ([style.overflowX, style.overflowY].some((value) => ['auto', 'hidden', 'scroll'].includes(value))) {
+      return true
+    }
+    ancestor = ancestor.parentElement
+  }
+  return false
 }

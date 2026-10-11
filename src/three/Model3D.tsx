@@ -21,6 +21,8 @@ type Model3DProps = {
   alt: string
   mode: 'tilt' | 'orbit'
   autoRotate?: boolean
+  posterFetchPriority?: 'high'
+  onInteractiveChange?: (active: boolean) => void
   ref?: Ref<Model3DHandle>
 }
 
@@ -40,7 +42,7 @@ class SceneBoundary extends Component<{ children: ReactNode; onError: () => void
   }
 }
 
-export function Model3D({ config, alt, mode, autoRotate = false, ref }: Model3DProps) {
+export function Model3D({ config, alt, mode, autoRotate = false, posterFetchPriority, onInteractiveChange, ref }: Model3DProps) {
   const capabilities = useCapabilities()
   const container = useRef<HTMLDivElement>(null)
   const invalidate = useRef<() => void>(() => undefined)
@@ -49,12 +51,23 @@ export function Model3D({ config, alt, mode, autoRotate = false, ref }: Model3DP
   const [activated, setActivated] = useState(false)
   const [contextLost, setContextLost] = useState(false)
   const [renderFailed, setRenderFailed] = useState(false)
+  const [sceneReady, setSceneReady] = useState(false)
 
   const eligible = capabilities.ready && capabilities.webgl && !capabilities.reducedMotion &&
     !capabilities.saveData && !(capabilities.coarsePointer && config.mobile === 'still') &&
     !(config.interaction === 'none' && config.mobile === 'still')
   const sceneMounted = eligible && activated && !renderFailed
   const fallback = !sceneMounted || contextLost
+  const interactive = sceneMounted && sceneReady && !contextLost
+
+  useEffect(() => {
+    onInteractiveChange?.(interactive)
+  }, [interactive, onInteractiveChange])
+
+  useEffect(() => {
+    if (!sceneMounted) return
+    return () => setSceneReady(false)
+  }, [sceneMounted])
 
   useImperativeHandle(ref, () => ({
     rotateBy(degrees: number) {
@@ -144,6 +157,7 @@ export function Model3D({ config, alt, mode, autoRotate = false, ref }: Model3DP
         className="model-3d__poster"
         src={config.poster.src}
         alt=""
+        fetchPriority={posterFetchPriority}
         width={config.poster.width}
         height={config.poster.height}
       />
@@ -157,7 +171,10 @@ export function Model3D({ config, alt, mode, autoRotate = false, ref }: Model3DP
                 autoRotate={autoRotate}
                 coarsePointer={capabilities.coarsePointer}
                 motion={motion}
-                onReady={(nextInvalidate) => { invalidate.current = nextInvalidate }}
+                onReady={(nextInvalidate) => {
+                  invalidate.current = nextInvalidate
+                  setSceneReady(true)
+                }}
                 onContextLost={() => setContextLost(true)}
                 onContextRestored={() => setContextLost(false)}
               />

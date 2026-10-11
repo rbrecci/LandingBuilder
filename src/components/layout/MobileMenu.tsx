@@ -19,6 +19,7 @@ export function MobileMenu({ items, activeSection, open, onClose, triggerRef }: 
   useEffect(() => {
     if (!open) return;
 
+    const trigger = triggerRef.current;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     closeRef.current?.focus();
@@ -49,7 +50,7 @@ export function MobileMenu({ items, activeSection, open, onClose, triggerRef }: 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = previousOverflow;
-      triggerRef.current?.focus();
+      trigger?.focus();
     };
   }, [open, onClose, triggerRef]);
 

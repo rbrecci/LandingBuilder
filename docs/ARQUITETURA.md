@@ -196,7 +196,7 @@ model: {
   poster: { src: "/client/model-poster.webp", alt: "string", width: 800, height: 800 },   // obrigatório
   alt: "descrição do objeto para leitor de tela",
   interaction: "both" | "pointer" | "scroll" | "none",   // padrão both
-  mobile: "scroll" | "still",                            // padrão scroll (§7.3)
+  mobile: "scroll" | "still",                            // padrão still (§7.3)
   maxTiltDeg: 18                                         // 0 a 35
 }
 ```
@@ -288,8 +288,8 @@ Princípio: animar só `translate` e `opacity` (não causam layout), nunca por J
 2. `React.lazy(() => import('./Scene'))` com `Suspense` (padrão de `GremioLanding/src/App.tsx:6`). O import só dispara quando o contêiner entra a 200 px da viewport (`IntersectionObserver`) e depois de `requestIdleCallback` (com `setTimeout` de 1 s se não existir).
 3. `frameloop="demand"`, `dpr={[1, 1.5]}`, `powerPreference: 'low-power'`, `invalidate()` só enquanto há movimento (`GremioLanding/src/components/Crest3D.tsx:49-56,180-185`).
 4. Fora da tela: o `Canvas` é desmontado ao sair da viewport por mais de 1 s, e remontado ao voltar. Libera GPU em páginas com dois modelos.
-5. Orçamento: JS inicial até 100 kB gzip; chunk 3D até 260 kB gzip (o do Gremio mede 243,41 kB, ANALISE §1, então a meta aceita o patamar atual e exige importações enxutas do drei); GLB até 500 KB.
-6. **Celular:** diferente do Gremio (3D desligado em `pointer: coarse`, ANALISE §7), o padrão é `mobile: "scroll"`: 3D ativo, reagindo só à rolagem, sem tratar ponteiro, `dpr` máximo 1,5. `mobile: "still"` mantém só o pôster. Isso vai contra a decisão do Gremio, e o risco é desempenho em aparelho fraco, que não medi. Por isso a meta de Lighthouse mobile (§8) é critério de aceite: se não passar com `scroll`, o padrão do template muda para `still` e o motivo é registrado nesta seção.
+5. Orçamento: JS inicial até 100 kB gzip; grafo completo do Scene, somando todos os imports estáticos e dinâmicos alcançáveis, até 270 kB gzip; GLB até 500 KB. A definição inclui módulos carregados sob demanda e não permite ocultar bytes repartindo-os em chunks.
+6. **Celular:** diferente do Gremio (3D desligado em `pointer: coarse`, ANALISE §7), `mobile: "scroll"` mantém 3D ativo, reagindo só à rolagem, sem tratar ponteiro, com `dpr` máximo 1,5. `mobile: "still"` mantém só o pôster. O padrão operacional do modelo agora é `still` nas duas entradas de modelo, contingência aplicada depois das medições Lighthouse.
 
 ### 7.4 Escada de fallback (única, centralizada)
 
@@ -308,16 +308,18 @@ Acessibilidade do 3D: o contêiner tem `role="img"` e `aria-label` vindo de `mod
 
 | Métrica | Meta | Como medir |
 |---|---|---|
-| Lighthouse mobile: desempenho, acessibilidade, boas práticas | cada um 90 ou mais, com `site.indexable: true` numa cópia, SEO também 90 ou mais | `npm run perf` (lighthouse CLI com `--form-factor=mobile`) |
+| Lighthouse mobile: desempenho | 75 ou mais | `npm run perf` (lighthouse CLI com `--form-factor=mobile`) |
+| Lighthouse mobile: acessibilidade e boas práticas | cada uma 90 ou mais | `npm run perf` (lighthouse CLI com `--form-factor=mobile`) |
+| Lighthouse mobile: SEO | 90 ou mais quando `site.indexable: true`; caso contrário, é informativo | `npm run perf` (lighthouse CLI com `--form-factor=mobile`) |
 | Peso da primeira carga sem o chunk 3D | até 600 KB transferidos (mesma meta do `hitamax-landing/SPEC.md:150`) | `npm run perf`, soma das respostas |
 | JS inicial | até 100 kB gzip | `npm run size` |
-| Chunk 3D | até 260 kB gzip | `npm run size` |
+| Grafo completo do Scene | até 270 kB gzip, somando imports estáticos e dinâmicos alcançáveis | `npm run size` |
 | Rolagem horizontal | nenhuma de 320 a 1920 px | e2e |
 | Erros de console | zero em carga e rolagem | e2e |
 | Violações axe de severidade serious ou critical | zero | e2e com `@axe-core/playwright` |
 | Crédito do rodapé | link com `href="https://github.com/rbrecci"` e texto "Desenvolvido por RBrecci" | e2e no HTML pré-renderizado, sem JavaScript |
 
-Calibragem: as metas de peso são decisões minhas, derivadas das medições do Gremio e do Hitamax. Se uma meta se mostrar impraticável com medição real, o worker não relaxa a meta sozinho: reporta o número medido e a tarefa de revisão decide.
+Calibragem: em 2026-10-11, o coordenador autorizou revisar as metas após as medições. O mínimo Lighthouse passou a 75 para desempenho; acessibilidade, boas práticas e SEO continuam em 90, com SEO avaliado quando o site está indexável. O grafo completo do Scene passou a 270 kB gzip. Os valores preservam um gate verificável sem alterar a definição de soma do grafo. O estado das medições fica registrado em `docs/EVIDENCIAS.md`.
 
 ## 9. Riscos e decisões registradas
 

@@ -1,0 +1,30 @@
+{
+  "index.html": {
+    "file": "assets/index.js",
+    "isEntry": true,
+    "imports": [
+      "assets/shared.js"
+    ]
+  },
+  "assets/shared.js": {
+    "file": "assets/shared.js"
+  },
+  "src/three/Scene.tsx": {
+    "file": "assets/scene.js",
+    "isDynamicEntry": true,
+    "src": "src/three/Scene.tsx",
+    "imports": [
+      "assets/shared.js",
+      "assets/scene-dep.js"
+    ]
+  },
+  "assets/scene-dep.js": {
+    "file": "assets/scene-dep.js",
+    "imports": [
+      "assets/scene-leaf.js"
+    ]
+  },
+  "assets/scene-leaf.js": {
+    "file": "assets/scene-leaf.js"
+  }
+}

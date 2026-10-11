@@ -81,7 +81,7 @@
           },
           "alt": "Medalhão tridimensional ilustrativo com a marca Casa Exemplo",
           "interaction": "both",
-          "mobile": "scroll",
+          "mobile": "still",
           "maxTiltDeg": 18
         },
         "layers": [
@@ -186,7 +186,7 @@
           },
           "alt": "Objeto tridimensional ilustrativo da Casa Exemplo",
           "interaction": "both",
-          "mobile": "scroll",
+          "mobile": "still",
           "maxTiltDeg": 18
         },
         "caption": "Modelo ilustrativo para demonstrar a visualização interativa.",

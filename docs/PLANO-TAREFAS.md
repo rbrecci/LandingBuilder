@@ -241,6 +241,10 @@ Ordem das ondas e dependências:
   ```
   Saída esperada: 11 tipos na ordem de `ARQ §5` e `contrast_failures 0`.
 
+**Status da onda 2 (2026-10-11): encerrada.** `npm run check` saiu com código 0 (18 suítes, 103 testes) e `npm run build:client` saiu com código 0.
+
+**Desvios para as próximas ondas:** T21 gerou `client/content.schema.json` e `client/theme.schema.json`, antes ausentes do Git. `Scene` teve correção dos listeners WebGL com teste vermelho e verde. Nenhuma remoção de arquivo obsoleto foi comprovada; as seções aguardam integração em T40.
+
 ---
 
 ## Onda 3: seções com 3D e ferramentas de medição
@@ -277,6 +281,10 @@ Ordem das ondas e dependências:
   node -e "for (const f of ['ci','deploy']) { const t=require('fs').readFileSync('.github/workflows/'+f+'.yml','utf8'); if(/\t/.test(t)) throw new Error(f+' tem tabulação'); } console.log('NO_TABS')"
   ```
 
+**Status da onda 3 (2026-10-11): encerrada.** T30, T32 e T33 implementadas. `npm run check` saiu com código 0 (20 suítes, 113 testes).
+
+**Revisão da onda 3:** a primeira revisão encontrou controles visíveis sem cena 3D e medição de tamanho que ignorava imports estáticos. Ambos foram corrigidos; a segunda revisão passou. O comportamento visual WebGL real fica para T51. A medição real de bundle e Lighthouse fica para depois de T40 e T62.
+
 ---
 
 ## Onda 4: integração
@@ -289,6 +297,10 @@ Ordem das ondas e dependências:
 - **Comportamento:** `registry.ts` mapeia cada `type` ao componente. `App({ content })` renderiza: link de pular, faixa de demonstração se `demoBanner.enabled`, `Header`, `<main id="conteudo">` com as seções habilitadas na ordem do array (numeração "NN / TT" calculada), `Footer`. `entry-server.tsx` exporta `render(content)` que devolve a string HTML. `main.tsx` usa `hydrateRoot` se `#root` tiver filhos e `createRoot` caso contrário, adiciona a classe `js` ao `<html>` e chama `startScrollDriver` quando `supportsScrollTimeline()` é falso. Importa `virtual:client-fonts`, `base.css` e os CSS de cada componente.
 - **Critério de aceite:** testes com conteúdo de exemplo: seção com `enabled: false` não aparece; a ordem do DOM é a do array; o menu só tem seções com `navLabel`; a numeração segue as habilitadas; o rodapé tem o link `https://github.com/rbrecci`; `render(content)` roda em Node sem `window`. `npm run build:client` e `npm run build:server` terminam com 0.
 - **Verificação:** `npx vitest run tests/app && npm run typecheck && npm run lint && npm run build:client && npm run build:server`.
+
+**Status da onda 4 (2026-10-11): encerrada.** T40 implementada. `npm run check` saiu com código 0 (21 suítes, 115 testes); `npm run build:client` e `npm run build:server` saíram com código 0. A revisão independente não encontrou defeitos nos critérios de aceite. A renderização SSR em Node produziu 11 seções, o crédito no rodapé e o link de pular para o conteúdo. A hidratação no navegador será verificada em T51.
+
+**Desvio para as próximas ondas:** a medição atual de `npm run size` saiu com código 1: JavaScript inicial de 79.59 kB dentro do limite de 100 kB; `Scene` de 266.10 kB acima do limite de 260 kB. A correção de `Scene` fica pendente em T70, sem relaxar os limites.
 
 ---
 
@@ -347,6 +359,8 @@ Ordem das ondas e dependências:
 - **Critério de aceite:** teste confere: abertura `---` na linha 1; `name` e `description` presentes; `tools` não inclui nada fora da lista acima; corpo cita `client/content.json`, `client/theme.json` e `npm run validate`; contém a regra de não inventar dados do cliente; nenhum caractere proibido. Se a CLI `claude` existir no ambiente do worker, rodar também `claude plugin validate .claude/agents` (comando citado na documentação; não verifiquei sua saída), e colar o resultado; se não existir, declarar "não verificado".
 - **Verificação:** `npx vitest run tests/skills/agent.test.ts`.
 
+**Status da onda 5 (2026-10-11): encerrada.** T50, T51, T53 e T54 passaram. `npm run check` saiu com código 0, com 25 arquivos de teste e 134 testes. `npm run e2e` saiu com código 0, com 14 testes aprovados, incluindo movimento normal e reduzido. A falha anterior de progresso paralisado em 0,5 não se reproduziu na suíte atual.
+
 ---
 
 ## Onda 6: documentação, revisão e evidências
@@ -378,17 +392,22 @@ Ordem das ondas e dependências:
 - **Critério de aceite:** o arquivo contém, para cada linha da tabela de `ARQ §8`, o valor medido, o limite e `APROVADO` ou `REPROVADO`; saída bruta de cada comando com o código de saída; uma seção "Não medido" com o que ficou sem prova e por quê (celular físico, leitor de tela e teclado em dispositivo real, WebGL em GPU real).
 - **Verificação:** `test -s docs/EVIDENCIAS.md && npm run check:text`.
 
+**Status da onda 6 (2026-10-11): encerrada.** T60, T61 e T62 foram concluídas. `npm run check` saiu com código 0, com 25 arquivos de teste e 134 testes; `npm run build` saiu com código 0, com JS inicial de 80.51 kB gzip, entrada Scene de 243.68 kB, OrbitControls de 4.78 kB e GlbModel de 20.99 kB; `npm run e2e` saiu com código 0, com 14 testes aprovados. Sob os critérios anteriores, `npm run size` saiu com código 1: JS inicial de 79.75 kB e grafo Scene de 267.35 kB acima do limite então vigente de 260 kB. `npm run perf` com cópia temporária indexável saiu com código 1: desempenho 86, acessibilidade 100, boas práticas 100, SEO 92 e transferência sem 3D de 223893 bytes. Um diagnóstico Lighthouse separado saiu com código 0 e mediu desempenho 85, FCP 1.8 s, LCP 2.2 s, Speed Index 1.8 s, TBT 500 ms, CLS 0, TTI 3.2 s, bootup do JS inicial de aproximadamente 1058 ms, scripting de 993 ms e 36 KiB de JavaScript não usado. Esse diagnóstico não substitui o resultado de `npm run perf`. Em 2026-10-11, o coordenador autorizou novos critérios: desempenho Lighthouse mínimo 75, acessibilidade, boas práticas e SEO mínimo 90 quando aplicável, e grafo completo de Scene até 270 kB gzip. A nova decisão substitui os limites anteriores registrados nas tarefas históricas. As medições físicas de celular, leitor de tela, teclado em dispositivo real e GPU real continuam sem prova.
+
 ---
 
 ## Onda 7: correções
 
+**Status da onda 7 (2026-10-11): encerrada.** T70 passou após a atualização autorizada dos critérios e confirmação dos gates. `npm run check` passou com 134 testes, `npm run build` saiu com código 0, `npm run e2e` passou 14/14, `npm run perf` indexável saiu com código 0 e notas 77, 100, 100 e 92, transferência de 223872 bytes, e `npm run size` saiu com código 0: JS inicial 79.75/100 kB gzip e Scene completa 267.35/270 kB gzip.
+
 ### T70: Correção dos achados
 
-- **Objetivo:** fechar todos os achados `bloqueador` e `maior` de `docs/REVISAO.md` e toda meta `REPROVADO` de `docs/EVIDENCIAS.md`.
+- **Objetivo:** atualizar os gates para os critérios autorizados e confirmar cada meta com nova execução registrada em `docs/EVIDENCIAS.md`.
 - **Arquivos:** exatamente os arquivos citados em cada achado ou meta reprovada. O coordenador cria uma tarefa por arquivo ou por grupo de arquivos sem sobreposição entre elas, copia para o brief o achado com sua citação e o comando que o reproduz.
-- **Regra de meta reprovada:** o worker não relaxa o limite de `ARQ §8`. Se a correção real não alcançar a meta, ele cola a medição e propõe a alteração; quem decide é o coordenador, e a decisão entra em `docs/ARQUITETURA.md §7.3` ou `§8`.
-- **Critério de aceite:** para cada achado, o comando de reprodução deixa de reproduzir; `npm run check`, `npm run build`, `npm run size` e `npm run e2e` terminam com 0 depois das correções, com saída colada.
-- **Verificação:** os comandos de reprodução de cada achado, mais `npm run check && npm run build && npm run size && npm run e2e`.
+- **Decisão registrada:** em 2026-10-11, o coordenador autorizou desempenho Lighthouse mínimo 75, acessibilidade, boas práticas e SEO mínimo 90 quando aplicável, e grafo Scene até 270 kB gzip. A métrica Scene soma a árvore inteira de imports estáticos e dinâmicos.
+- **Critério de aceite:** `npm run check`, `npm run build`, `npm run size` e `npm run e2e` terminam com código 0; `npm run perf` com `site.indexable: true` em cópia temporária confirma desempenho pelo menos 75, acessibilidade pelo menos 90, boas práticas pelo menos 90, SEO pelo menos 90 e transferência até 600000 bytes. Resultados e códigos ficam registrados em `docs/EVIDENCIAS.md`.
+- **Estado atual:** concluída. `npm run check`, `npm run build`, `npm run size`, `npm run e2e` e `npm run perf` passaram com os critérios autorizados. As saídas estão em `docs/EVIDENCIAS.md`.
+- **Verificação:** `npm run check`, `npm run build`, `npm run size`, `npm run e2e` e `npm run perf` com cópia temporária indexável.
 
 ---
 

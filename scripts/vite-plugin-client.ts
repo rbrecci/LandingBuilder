@@ -9,8 +9,10 @@ import { themeToCss } from '../src/theme/tokens.ts'
 
 type ClientInput = { content?: unknown; theme?: unknown }
 
-const virtualId = 'virtual:client-fonts'
-const resolvedVirtualId = `\0${virtualId}`
+const fontsVirtualId = 'virtual:client-fonts'
+const resolvedFontsVirtualId = `\0${fontsVirtualId}`
+const contentVirtualId = 'virtual:client-content'
+const resolvedContentVirtualId = `\0${contentVirtualId}`
 
 function escapeHtml(value: string) {
   return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -98,6 +100,9 @@ export default function clientPlugin(input: ClientInput = {}): Plugin {
     configResolved(config) {
       root = config.root
     },
+    configureServer(server) {
+      server.watcher.add(resolve(root, 'client', 'content.json'))
+    },
     async transformIndexHtml(html) {
       const content = parseContent(await readClient('content'))
       const theme = parseTheme(await readClient('theme'))
@@ -105,14 +110,26 @@ export default function clientPlugin(input: ClientInput = {}): Plugin {
       return html.replace(/<title>[^<]*<\/title>/i, '').replace('<!--head-meta-->', renderHead(content, theme))
     },
     resolveId(id) {
-      if (id === virtualId) return resolvedVirtualId
+      if (id === fontsVirtualId) return resolvedFontsVirtualId
+      if (id === contentVirtualId) return resolvedContentVirtualId
     },
     async load(id) {
-      if (id !== resolvedVirtualId) return
+      if (id === resolvedContentVirtualId) {
+        const content = parseContent(await readClient('content'))
+        return `export default ${JSON.stringify(content)}`
+      }
+      if (id !== resolvedFontsVirtualId) return
       const theme = parseTheme(await readClient('theme'))
       const fonts = [theme.fonts.display, theme.fonts.body]
       const imports = fonts.flatMap((font) => FONT_CATALOG.find((entry) => entry.id === font)?.imports ?? [])
       return [...new Set(imports)].map((path) => `import '${path}'`).join('\n')
+    },
+    handleHotUpdate({ file, modules, server, timestamp }) {
+      if (file !== resolve(root, 'client', 'content.json')) return
+      const contentModule = server.moduleGraph.getModuleById(resolvedContentVirtualId)
+      if (!contentModule) return
+      server.moduleGraph.invalidateModule(contentModule, undefined, timestamp, true)
+      return [...new Set([...modules, contentModule])]
     },
   }
 }

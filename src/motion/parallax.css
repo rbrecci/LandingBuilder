@@ -11,7 +11,7 @@
 }
 
 @supports ((animation-timeline: view()) and (animation-range: entry)) {
-  [data-parallax] {
+  [data-parallax]:not([data-parallax-driver]) {
     animation: parallax-scroll linear both;
     animation-timeline: view();
     animation-range: entry 0% exit 100%;

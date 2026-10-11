@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef } from 'react'
 import type { RefObject } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { OrbitControls, useGLTF, useTexture } from '@react-three/drei'
-import { MathUtils, SRGBColorSpace } from 'three'
-import type { Group, Object3D, Texture } from 'three'
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber'
+import { MathUtils, SRGBColorSpace, TextureLoader } from 'three'
+import type { Group, Texture } from 'three'
 import type { ModelConfig } from '../content/schema.ts'
 import type { MotionTarget } from './Model3D.tsx'
 import { MedalModel } from './MedalModel.tsx'
-import { GlbModel } from './GlbModel.tsx'
+
+const OrbitControls = lazy(() => import('@react-three/drei/core/OrbitControls.js')
+  .then((module) => ({ default: module.OrbitControls })))
+const GlbModel = lazy(() => import('./GlbModel.tsx').then((module) => ({ default: module.GlbModel })))
 
 export type SceneTexture = Texture
-export type SceneObject = Object3D
 
 type SceneProps = {
   config: ModelConfig
@@ -27,7 +28,7 @@ function MedalAsset({ config, colors }: {
   config: Extract<ModelConfig, { kind: 'medal' }>
   colors: { edge: string; rim: string; back: string }
 }) {
-  const source = useTexture(config.medal.texture)
+  const source = useLoader(TextureLoader, config.medal.texture)
   const texture = useMemo(() => {
     const copy = source.clone()
     copy.colorSpace = SRGBColorSpace
@@ -40,9 +41,11 @@ function MedalAsset({ config, colors }: {
 }
 
 function GlbAsset({ config }: { config: Extract<ModelConfig, { kind: 'glb' }> }) {
-  const gltf = useGLTF(config.glb.src, false, true)
-  const object = useMemo(() => gltf.scene.clone(true), [gltf.scene])
-  return <GlbModel object={object} scale={config.glb.scale} rotation={config.glb.rotation} />
+  return (
+    <Suspense fallback={null}>
+      <GlbModel config={config} />
+    </Suspense>
+  )
 }
 
 function SceneContent({ config, mode, autoRotate, coarsePointer, motion, colors, light }: Pick<SceneProps,
@@ -51,18 +54,19 @@ function SceneContent({ config, mode, autoRotate, coarsePointer, motion, colors,
     light: { ambient: number; key: number; fill: number }
   }) {
   const group = useRef<Group>(null)
+  const autoRotation = useRef(0)
   const { invalidate } = useThree()
 
   useFrame((_, delta) => {
     const object = group.current
     if (!object) return
-    if (autoRotate && mode === 'tilt') motion.current.rotationDegrees += delta * 12
+    if (autoRotate && mode === 'tilt') autoRotation.current += delta * 12
     const maxTilt = MathUtils.degToRad(config.maxTiltDeg)
     const pointerX = coarsePointer ? 0 : motion.current.pointerX
     const pointerY = coarsePointer ? 0 : motion.current.pointerY
     const scroll = config.interaction === 'none' ? 0 : motion.current.scroll - 0.5
     const desiredX = mode === 'tilt' ? -0.07 - pointerY * maxTilt * 0.5 + scroll * 0.12 : -0.07
-    const desiredY = -0.22 + MathUtils.degToRad(motion.current.rotationDegrees) +
+    const desiredY = -0.22 + MathUtils.degToRad(motion.current.rotationDegrees + autoRotation.current) +
       (mode === 'tilt' ? pointerX * maxTilt + scroll * 0.12 : 0)
     const desiredScale = mode === 'tilt' && motion.current.hover ? 1.045 : 1
     const blend = 1 - Math.exp(-Math.min(delta, 0.05) * 7)
@@ -87,7 +91,9 @@ function SceneContent({ config, mode, autoRotate, coarsePointer, motion, colors,
           : <GlbAsset config={config} />}
       </group>
       {mode === 'orbit' && (
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate={autoRotate} />
+        <Suspense fallback={null}>
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate={autoRotate} />
+        </Suspense>
       )}
     </>
   )
@@ -96,6 +102,7 @@ function SceneContent({ config, mode, autoRotate, coarsePointer, motion, colors,
 export function Scene({ config, mode, autoRotate, coarsePointer, motion, onReady,
   onContextLost, onContextRestored }: SceneProps) {
   const canvas = useRef<HTMLCanvasElement | null>(null)
+  const contextListeners = useRef<{ lost: (event: Event) => void; restored: () => void } | null>(null)
   const colors = useMemo(() => {
     const style = getComputedStyle(document.documentElement)
     const read = (name: string) => style.getPropertyValue(name).trim()
@@ -117,11 +124,12 @@ export function Scene({ config, mode, autoRotate, coarsePointer, motion, onReady
   useEffect(() => {
     return () => {
       const element = canvas.current
-      if (!element) return
-      element.removeEventListener('webglcontextlost', onContextLost)
-      element.removeEventListener('webglcontextrestored', onContextRestored)
+      const listeners = contextListeners.current
+      if (!element || !listeners) return
+      element.removeEventListener('webglcontextlost', listeners.lost)
+      element.removeEventListener('webglcontextrestored', listeners.restored)
     }
-  }, [onContextLost, onContextRestored])
+  }, [])
 
   return (
     <Canvas
@@ -132,6 +140,11 @@ export function Scene({ config, mode, autoRotate, coarsePointer, motion, onReady
       gl={{ antialias: true, alpha: true, powerPreference: 'low-power' }}
       onCreated={(state) => {
         const element = state.gl.domElement
+        const previous = contextListeners.current
+        if (canvas.current && previous) {
+          canvas.current.removeEventListener('webglcontextlost', previous.lost)
+          canvas.current.removeEventListener('webglcontextrestored', previous.restored)
+        }
         const lost = (event: Event) => {
           event.preventDefault()
           onContextLost()
@@ -143,6 +156,7 @@ export function Scene({ config, mode, autoRotate, coarsePointer, motion, onReady
         element.addEventListener('webglcontextlost', lost)
         element.addEventListener('webglcontextrestored', restored)
         canvas.current = element
+        contextListeners.current = { lost, restored }
         onReady(state.invalidate)
       }}
     >

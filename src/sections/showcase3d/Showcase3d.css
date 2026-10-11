@@ -1,0 +1,58 @@
+.showcase3d__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(14rem, 0.8fr);
+  align-items: end;
+  gap: clamp(1.5rem, 5vw, 5rem);
+}
+
+.showcase3d__figure {
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.showcase3d__figure .model-3d {
+  max-inline-size: 36rem;
+  margin-inline: auto;
+}
+
+.showcase3d__figure figcaption {
+  margin-block-start: 1rem;
+  font-size: 0.875rem;
+  opacity: 0.75;
+  text-align: center;
+}
+
+.showcase3d__info {
+  display: grid;
+  align-content: end;
+  gap: 1.5rem;
+}
+
+.showcase3d__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.showcase3d__controls button {
+  min-block-size: 3rem;
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  padding: 0.6rem 0.9rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.showcase3d__controls button:hover,
+.showcase3d__controls button[aria-pressed='true'] {
+  background: var(--color-brand);
+  color: var(--color-brand-contrast);
+}
+
+@media (max-width: 48rem) {
+  .showcase3d__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
