@@ -24,20 +24,20 @@ export function Showcase3d({ section, index, total }: { section: Showcase3dSecti
       <Reveal className="showcase3d__layout">
         <figure className="showcase3d__figure">
           <Model3D ref={model} config={section.data.model} alt={section.data.model.alt} mode="orbit" autoRotate={section.data.controls && !paused} onInteractiveChange={setInteractive} />
-          <figcaption>{section.data.caption}</figcaption>
+          <figcaption className="showcase3d__info">
+            <span className="showcase3d__caption">{section.data.caption}</span>
+            {section.placeholder && <Badge />}
+            {section.data.controls && interactive && (
+              <div className="showcase3d__controls" role="group" aria-label="Controles do modelo 3D" onKeyDown={onKeyDown}>
+                <button type="button" onClick={() => model.current?.rotateBy(-15)}>Girar para a esquerda</button>
+                <button type="button" onClick={() => model.current?.rotateBy(15)}>Girar para a direita</button>
+                <button type="button" aria-pressed={paused} onClick={() => setPaused((value) => !value)}>
+                  {paused ? 'Retomar rotação' : 'Pausar rotação'}
+                </button>
+              </div>
+            )}
+          </figcaption>
         </figure>
-        <div className="showcase3d__info">
-          {section.placeholder && <Badge />}
-          {section.data.controls && interactive && (
-            <div className="showcase3d__controls" role="group" aria-label="Controles do modelo 3D" onKeyDown={onKeyDown}>
-              <button type="button" onClick={() => model.current?.rotateBy(-15)}>Girar para a esquerda</button>
-              <button type="button" onClick={() => model.current?.rotateBy(15)}>Girar para a direita</button>
-              <button type="button" aria-pressed={paused} onClick={() => setPaused((value) => !value)}>
-                {paused ? 'Retomar rotação' : 'Pausar rotação'}
-              </button>
-            </div>
-          )}
-        </div>
       </Reveal>
     </SectionShell>
   )
