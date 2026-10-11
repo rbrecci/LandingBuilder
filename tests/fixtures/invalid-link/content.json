@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "site": {
+    "lang": "pt-BR",
+    "title": "Casa Exemplo | Café e padaria de bairro",
+    "description": "Conheça a Casa Exemplo, uma cafeteria e padaria fictícia feita para demonstrar os recursos de uma landing page.",
+    "indexable": false,
+    "ogImage": "/client/og.jpg",
+    "favicon": "/client/favicon.svg",
+    "demoBanner": {
+      "enabled": true,
+      "text": "Este site é uma demonstração."
+    }
+  },
+  "brand": {
+    "name": "Casa Exemplo",
+    "shortName": "Casa",
+    "tagline": "Um lugar para fazer uma pausa",
+    "logo": {
+      "src": "/client/logo.svg",
+      "alt": "Logotipo da Casa Exemplo",
+      "width": 256,
+      "height": 256
+    }
+  },
+  "nav": {
+    "cta": {
+      "label": "Conheça a casa",
+      "to": "#id-inexistente"
+    }
+  },
+  "sections": [
+    {
+      "id": "inicio",
+      "type": "hero",
+      "enabled": true,
+      "navLabel": "Início",
+      "tone": "brand",
+      "title": "Casa Exemplo",
+      "data": {
+        "headline": "Uma pausa com sabor de casa",
+        "subheadline": "Café, conversa e bons encontros em um espaço criado para inspirar.",
+        "ctas": [
+          {
+            "label": "Saiba mais",
+            "to": "#sobre",
+            "variant": "primary"
+          }
+        ],
+        "model": {
+          "kind": "glb",
+          "poster": {
+            "src": "/client/model-poster.webp",
+            "alt": "Modelo ilustrativo da Casa Exemplo",
+            "width": 800,
+            "height": 800
+          },
+          "alt": "Modelo tridimensional ilustrativo da Casa Exemplo",
+          "glb": {
+            "src": "/client/model.glb",
+            "scale": 1,
+            "rotation": [0, 0, 0]
+          }
+        },
+        "layers": [
+          {
+            "src": "/client/layer-1.svg",
+            "speed": 0.15
+          }
+        ]
+      }
+    },
+    {
+      "id": "sobre",
+      "type": "about",
+      "enabled": true,
+      "navLabel": "Sobre",
+      "tone": "light",
+      "title": "Feito para receber você",
+      "data": {
+        "paragraphs": [
+          "A Casa Exemplo é uma marca fictícia que apresenta os componentes deste modelo."
+        ],
+        "image": {
+          "src": "/client/about.webp",
+          "alt": "Interior ilustrativo de uma cafeteria",
+          "width": 800,
+          "height": 800
+        }
+      }
+    },
+    {
+      "id": "numeros",
+      "type": "stats",
+      "enabled": true,
+      "tone": "dark",
+      "title": "Nossa história em números",
+      "data": {
+        "items": [
+          { "value": "10", "label": "Receitas de exemplo" },
+          { "value": "3", "label": "Sabores favoritos" }
+        ]
+      }
+    },
+    {
+      "id": "servicos",
+      "type": "features",
+      "enabled": true,
+      "navLabel": "Serviços",
+      "tone": "light",
+      "title": "O que você encontra aqui",
+      "data": {
+        "items": [
+          { "title": "Café", "text": "Uma pausa para apreciar cada xícara." },
+          { "title": "Pães", "text": "Opções frescas para começar o dia." },
+          { "title": "Encontros", "text": "Espaço para conversar e compartilhar." }
+        ]
+      }
+    },
+    {
+      "id": "produto-3d",
+      "type": "showcase3d",
+      "enabled": true,
+      "tone": "brand",
+      "title": "Veja de perto",
+      "data": {
+        "model": {
+          "kind": "glb",
+          "poster": {
+            "src": "/client/showcase-poster.webp",
+            "alt": "Produto ilustrativo da Casa Exemplo",
+            "width": 800,
+            "height": 800
+          },
+          "alt": "Modelo tridimensional do produto ilustrativo",
+          "glb": {
+            "src": "/client/model.glb",
+            "scale": 1,
+            "rotation": [0, 0, 0]
+          }
+        },
+        "caption": "Modelo fictício para demonstrar a apresentação em três dimensões.",
+        "controls": true
+      }
+    },
+    {
+      "id": "galeria",
+      "type": "gallery",
+      "enabled": true,
+      "tone": "light",
+      "title": "Momentos da casa",
+      "data": {
+        "items": [
+          {
+            "src": "/client/gallery-1.webp",
+            "alt": "Primeira imagem ilustrativa da galeria",
+            "width": 800,
+            "height": 800,
+            "caption": "Um convite para chegar"
+          },
+          {
+            "src": "/client/gallery-2.webp",
+            "alt": "Segunda imagem ilustrativa da galeria",
+            "width": 800,
+            "height": 800,
+            "caption": "Sabores para compartilhar"
+          },
+          {
+            "src": "/client/gallery-3.webp",
+            "alt": "Terceira imagem ilustrativa da galeria",
+            "width": 800,
+            "height": 800,
+            "caption": "Um lugar para conversar"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ofertas",
+      "type": "offers",
+      "enabled": true,
+      "tone": "accent",
+      "title": "Sugestões de exemplo",
+      "data": {
+        "items": [
+          { "name": "Café da casa", "price": "R$ 12", "unit": "unidade" },
+          { "name": "Pão artesanal", "price": "R$ 18", "unit": "unidade" }
+        ],
+        "note": "Valores fictícios usados apenas nesta demonstração."
+      }
+    }
+  ],
+  "footer": {
+    "legal": "Marca fictícia para demonstração.",
+    "links": [
+      {
+        "label": "Voltar ao início",
+        "to": "#inicio"
+      }
+    ]
+  }
+}

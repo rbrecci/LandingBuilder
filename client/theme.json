@@ -1,0 +1,22 @@
+{
+  "colors": {
+    "paper": "#F9F3E9",
+    "ink": "#2B211C",
+    "brand": "#6B2F24",
+    "brandContrast": "#FFFFFF",
+    "accent": "#EAC56A",
+    "accentContrast": "#2B211C",
+    "focus": "#285D78",
+    "surfaces": {
+      "dark": { "bg": "#231A18", "fg": "#FFF8EF" },
+      "light": { "bg": "#F9F3E9", "fg": "#2B211C" },
+      "brand": { "bg": "#6B2F24", "fg": "#FFFFFF" },
+      "accent": { "bg": "#EAC56A", "fg": "#2B211C" }
+    }
+  },
+  "fonts": { "display": "outfit", "body": "dm-sans" },
+  "radius": "md",
+  "density": "airy",
+  "motion": { "level": "bold", "parallaxRangePx": 40 },
+  "three": { "ambient": "#EEDAB9", "key": "#FFF5DD", "fill": "#B77A52" }
+}

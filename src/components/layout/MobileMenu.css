@@ -1,0 +1,56 @@
+.mobile-menu {
+  position: fixed;
+  z-index: 110;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: clamp(1rem, 4vw, 3rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--surface-brand-bg);
+  color: var(--surface-brand-fg);
+}
+
+.mobile-menu[hidden] {
+  display: none;
+}
+
+.mobile-menu__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-weight: 700;
+}
+
+.mobile-menu__top button {
+  min-block-size: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.mobile-menu nav {
+  display: grid;
+  align-content: center;
+  flex: 1;
+}
+
+.mobile-menu nav a {
+  padding: 0.75rem 0;
+  border-block-end: 1px solid currentColor;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 7vw, 4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  text-decoration: none;
+}
+
+.mobile-menu nav a[aria-current] {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}

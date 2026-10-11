@@ -1,0 +1,30 @@
+.model-3d {
+  position: relative;
+  inline-size: 100%;
+  aspect-ratio: 1;
+  touch-action: pan-y;
+}
+
+.model-3d__poster {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+}
+
+.model-3d__scene {
+  position: absolute;
+  inset: 0;
+  touch-action: pan-y;
+}
+
+.model-3d__scene canvas {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  touch-action: pan-y;
+}
+
+.model-3d:has(.model-3d__scene:not([hidden]) canvas) .model-3d__poster {
+  visibility: hidden;
+}

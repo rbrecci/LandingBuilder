@@ -1,0 +1,109 @@
+.gallery-content {
+  min-inline-size: 0;
+}
+
+.gallery-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-block-end: 1.5rem;
+}
+
+.gallery-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gallery-counter {
+  margin-inline-end: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.gallery-controls button {
+  inline-size: 3rem;
+  block-size: 3rem;
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.gallery-controls button:hover:not(:disabled) {
+  background: var(--color-brand);
+  color: var(--color-brand-contrast);
+}
+
+.gallery-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.gallery-track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding-block-end: 0.5rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  touch-action: pan-x;
+}
+
+.gallery-panel {
+  flex: 0 0 min(72vw, 34rem);
+  min-inline-size: 0;
+  margin: 0;
+  scroll-snap-align: start;
+}
+
+.gallery-panel:nth-child(even) {
+  flex-basis: min(58vw, 28rem);
+  margin-block-start: 3rem;
+}
+
+.gallery-image {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--color-brand);
+}
+
+.gallery-panel:nth-child(even) .gallery-image {
+  aspect-ratio: 3 / 4;
+}
+
+.gallery-image img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.gallery-image-number {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-end: 1rem;
+  color: var(--color-paper);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.gallery-panel figcaption {
+  padding-block: 1rem;
+  border-block-end: 1px solid currentColor;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 40rem) {
+  .gallery-panel,
+  .gallery-panel:nth-child(even) {
+    flex-basis: 82vw;
+    margin-block-start: 0;
+  }
+}

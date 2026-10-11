@@ -1,0 +1,26 @@
+.faq-list {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 52rem;
+}
+
+.faq-item {
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.faq-item summary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 0.25rem;
+}
+
+.faq-item p {
+  line-height: 1.6;
+  margin: 0.75rem 0 0;
+}

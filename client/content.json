@@ -1,0 +1,308 @@
+{
+  "$schema": "./content.schema.json",
+  "schemaVersion": 1,
+  "site": {
+    "lang": "pt-BR",
+    "title": "Casa Exemplo | Café e padaria de bairro",
+    "description": "Conheça a Casa Exemplo, uma demonstração fictícia de café e padaria de bairro com produtos, ofertas e experiências ilustrativas.",
+    "indexable": false,
+    "ogImage": "/client/og.jpg",
+    "favicon": "/client/favicon.svg",
+    "demoBanner": {
+      "enabled": true,
+      "text": "Site de demonstração. Marca, produtos, preços, depoimentos, endereço e horários são fictícios."
+    }
+  },
+  "brand": {
+    "name": "Casa Exemplo",
+    "shortName": "Casa",
+    "tagline": "Um lugar para boas pausas.",
+    "logo": {
+      "src": "/client/logo.svg",
+      "alt": "Logotipo ilustrativo da Casa Exemplo",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "business": {
+    "schemaType": "Restaurant",
+    "address": {
+      "street": "Rua Exemplo, 100",
+      "district": "Bairro Modelo",
+      "city": "São Paulo",
+      "region": "SP",
+      "postalCode": "00000-000",
+      "country": "BR"
+    },
+    "phone": "+5511900000000",
+    "whatsapp": "5511900000000",
+    "email": "contato@example.com",
+    "social": [],
+    "timezone": "America/Sao_Paulo",
+    "hours": [
+      { "day": 1, "opens": "08:00", "closes": "18:00" },
+      { "day": 2, "opens": "08:00", "closes": "18:00" },
+      { "day": 3, "opens": "08:00", "closes": "18:00" },
+      { "day": 4, "opens": "08:00", "closes": "18:00" },
+      { "day": 5, "opens": "08:00", "closes": "18:00" },
+      { "day": 6, "opens": "09:00", "closes": "16:00" }
+    ],
+    "hoursConfirmed": false
+  },
+  "nav": {
+    "cta": { "label": "Entre em contato", "to": "#contato" }
+  },
+  "sections": [
+    {
+      "type": "hero",
+      "id": "inicio",
+      "enabled": true,
+      "navLabel": "Início",
+      "tone": "dark",
+      "eyebrow": "Café e padaria de bairro",
+      "title": "Uma pausa boa começa aqui",
+      "intro": "Um espaço fictício criado para mostrar como sua marca pode ganhar vida na web.",
+      "placeholder": true,
+      "data": {
+        "headline": "Um sabor para chamar de seu.",
+        "subheadline": "Café fresco, receitas de vitrine e encontros que fazem o dia ficar mais leve. Tudo nesta página é um exemplo.",
+        "ctas": [
+          { "label": "Conheça a casa", "to": "#sobre", "variant": "primary" },
+          { "label": "Veja o cardápio de exemplo", "to": "#ofertas", "variant": "secondary" }
+        ],
+        "model": {
+          "kind": "medal",
+          "medal": { "texture": "/client/logo-face.png", "thickness": 0.16 },
+          "poster": {
+            "src": "/client/model-poster.webp",
+            "alt": "Ilustração do medalhão da Casa Exemplo",
+            "width": 1440,
+            "height": 900
+          },
+          "alt": "Medalhão tridimensional ilustrativo com a marca Casa Exemplo",
+          "interaction": "both",
+          "mobile": "scroll",
+          "maxTiltDeg": 18
+        },
+        "layers": [
+          { "src": "/client/layer-1.svg", "speed": 0.25 },
+          { "src": "/client/layer-2.svg", "speed": -0.2 },
+          { "src": "/client/layer-1.svg", "speed": 0.12 }
+        ],
+        "status": false
+      }
+    },
+    {
+      "type": "stats",
+      "id": "numeros",
+      "enabled": true,
+      "tone": "light",
+      "eyebrow": "Números ilustrativos",
+      "title": "Pequenos momentos, grandes histórias",
+      "intro": "Estes números servem apenas para demonstrar o formato da seção.",
+      "placeholder": true,
+      "data": {
+        "items": [
+          { "value": "12", "label": "receitas de exemplo", "note": "Dados fictícios" },
+          { "value": "08", "label": "mesas imaginárias", "note": "Dados fictícios" },
+          { "value": "100%", "label": "vontade de acolher", "note": "Mensagem ilustrativa" }
+        ]
+      }
+    },
+    {
+      "type": "about",
+      "id": "sobre",
+      "enabled": true,
+      "navLabel": "Sobre",
+      "tone": "brand",
+      "eyebrow": "A nossa história fictícia",
+      "title": "Um cantinho com cara de casa",
+      "intro": "A Casa Exemplo é uma marca criada para apresentar esta landing page.",
+      "placeholder": true,
+      "parallax": "subtle",
+      "data": {
+        "paragraphs": [
+          "Imagine uma padaria de bairro onde o cheiro de pão recém-saído do forno acompanha cada conversa. Essa é a ideia por trás da Casa Exemplo.",
+          "Da primeira xícara ao último pedaço de bolo, cada detalhe desta página mostra como uma história de marca pode ser contada com clareza e afeto."
+        ],
+        "image": {
+          "src": "/client/about.webp",
+          "alt": "Ambiente ilustrativo de café e padaria",
+          "width": 1600,
+          "height": 1000
+        },
+        "highlight": { "value": "01", "label": "ideia de bairro, muitas possibilidades" }
+      }
+    },
+    {
+      "type": "features",
+      "id": "servicos",
+      "enabled": true,
+      "navLabel": "Serviços",
+      "tone": "light",
+      "eyebrow": "O que você encontra aqui",
+      "title": "Feito para acompanhar seu dia",
+      "intro": "Três experiências imaginárias para mostrar produtos e serviços com personalidade.",
+      "placeholder": true,
+      "data": {
+        "items": [
+          {
+            "title": "Café com calma",
+            "text": "Uma xícara de exemplo para começar a manhã no seu ritmo.",
+            "image": { "src": "/client/feature-1.webp", "alt": "Café ilustrativo servido em uma xícara", "width": 960, "height": 720 }
+          },
+          {
+            "title": "Pães da casa",
+            "text": "Receitas fictícias que dão forma a uma vitrine convidativa.",
+            "image": { "src": "/client/feature-2.webp", "alt": "Pães ilustrativos em uma bancada", "width": 960, "height": 720 }
+          },
+          {
+            "title": "Pausa para conversar",
+            "text": "Um ambiente imaginário para encontros, ideias e boas histórias.",
+            "image": { "src": "/client/feature-3.webp", "alt": "Mesa ilustrativa preparada para uma pausa", "width": 960, "height": 720 }
+          }
+        ]
+      }
+    },
+    {
+      "type": "showcase3d",
+      "id": "produto-3d",
+      "enabled": true,
+      "navLabel": "Produto 3D",
+      "tone": "dark",
+      "eyebrow": "Um olhar de perto",
+      "title": "Um detalhe que ganha outra dimensão",
+      "intro": "Gire o objeto de demonstração e explore a apresentação em três dimensões.",
+      "placeholder": true,
+      "data": {
+        "model": {
+          "kind": "glb",
+          "glb": { "src": "/client/model.glb", "scale": 1, "rotation": [0, 0, 0] },
+          "poster": {
+            "src": "/client/showcase-poster.webp",
+            "alt": "Prévia ilustrativa do objeto tridimensional",
+            "width": 1440,
+            "height": 900
+          },
+          "alt": "Objeto tridimensional ilustrativo da Casa Exemplo",
+          "interaction": "both",
+          "mobile": "scroll",
+          "maxTiltDeg": 18
+        },
+        "caption": "Modelo ilustrativo para demonstrar a visualização interativa.",
+        "controls": true
+      }
+    },
+    {
+      "type": "gallery",
+      "id": "galeria",
+      "enabled": true,
+      "navLabel": "Galeria",
+      "tone": "accent",
+      "eyebrow": "Pelos cantos da casa",
+      "title": "Uma galeria para abrir o apetite",
+      "intro": "Imagens de demonstração para visualizar o clima da marca.",
+      "placeholder": true,
+      "data": {
+        "items": [
+          { "src": "/client/gallery-1.webp", "alt": "Cena ilustrativa de uma xícara de café", "caption": "Um começo com aroma de café", "width": 1200, "height": 800 },
+          { "src": "/client/gallery-2.webp", "alt": "Cena ilustrativa de pães na vitrine", "caption": "Pães para imaginar", "width": 1200, "height": 800 },
+          { "src": "/client/gallery-3.webp", "alt": "Cena ilustrativa de uma mesa de café", "caption": "Tempo para uma conversa", "width": 1200, "height": 800 },
+          { "src": "/client/gallery-4.webp", "alt": "Cena ilustrativa de um doce de padaria", "caption": "Um toque de doçura", "width": 1200, "height": 800 },
+          { "src": "/client/gallery-5.webp", "alt": "Cena ilustrativa do ambiente de uma padaria", "caption": "A casa vista de perto", "width": 1200, "height": 800 }
+        ]
+      }
+    },
+    {
+      "type": "offers",
+      "id": "ofertas",
+      "enabled": true,
+      "navLabel": "Ofertas",
+      "tone": "light",
+      "eyebrow": "Cardápio de demonstração",
+      "title": "Boas escolhas para uma pausa",
+      "intro": "Produtos e preços ilustrativos, sem validade comercial.",
+      "placeholder": true,
+      "data": {
+        "items": [
+          { "name": "Café da casa", "price": "R$ 9,00", "unit": "xícara", "tag": "Exemplo" },
+          { "name": "Pão de queijo", "price": "R$ 8,00", "unit": "porção", "tag": "Exemplo" },
+          { "name": "Fatia de bolo", "price": "R$ 14,00", "unit": "fatia", "tag": "Exemplo" }
+        ],
+        "note": "Preços e produtos fictícios, exibidos apenas para demonstrar o modelo."
+      }
+    },
+    {
+      "type": "testimonials",
+      "id": "depoimentos",
+      "enabled": true,
+      "tone": "brand",
+      "eyebrow": "Vozes imaginárias",
+      "title": "Histórias de exemplo para inspirar",
+      "intro": "Depoimentos inventados para demonstrar o formato da seção.",
+      "placeholder": true,
+      "data": {
+        "items": [
+          { "quote": "Um lugar imaginário que dá vontade de visitar de verdade.", "author": "Cliente fictícia", "role": "Exemplo de depoimento" },
+          { "quote": "A pausa do café ganhou um clima todo especial nesta página.", "author": "Cliente fictício", "role": "Exemplo de depoimento" }
+        ],
+        "consentConfirmed": false
+      }
+    },
+    {
+      "type": "faq",
+      "id": "duvidas",
+      "enabled": true,
+      "tone": "light",
+      "eyebrow": "Perguntas frequentes",
+      "title": "Tudo claro antes da primeira visita",
+      "intro": "Respostas de exemplo sobre esta marca fictícia.",
+      "placeholder": true,
+      "data": {
+        "items": [
+          { "question": "A Casa Exemplo existe?", "answer": "Não. A Casa Exemplo é uma marca fictícia criada para demonstrar esta landing page." },
+          { "question": "Posso fazer um pedido?", "answer": "Não. Os produtos, preços e canais de contato desta página são apenas exemplos." },
+          { "question": "Os horários estão confirmados?", "answer": "Não. Os horários exibidos são fictícios e servem somente para mostrar o componente de localização." }
+        ]
+      }
+    },
+    {
+      "type": "location",
+      "id": "onde",
+      "enabled": true,
+      "navLabel": "Onde estamos",
+      "tone": "accent",
+      "eyebrow": "Endereço ilustrativo",
+      "title": "Imagine a casa na sua vizinhança",
+      "intro": "O endereço e os horários abaixo são fictícios e não indicam um local aberto ao público.",
+      "placeholder": true,
+      "data": {
+        "showMap": true,
+        "mapQuery": "Rua Exemplo, 100, Bairro Modelo, São Paulo, SP",
+        "showHours": true
+      }
+    },
+    {
+      "type": "contact",
+      "id": "contato",
+      "enabled": true,
+      "navLabel": "Contato",
+      "tone": "dark",
+      "eyebrow": "Vamos conversar",
+      "title": "Sua próxima história pode começar aqui",
+      "intro": "Estes canais são fictícios e mostram como sua empresa pode receber contatos.",
+      "placeholder": true,
+      "data": {
+        "channels": ["phone", "whatsapp", "email"],
+        "closing": "Este é um exemplo. Substitua os canais pelos dados reais da sua marca antes de publicar."
+      }
+    }
+  ],
+  "footer": {
+    "legal": "Casa Exemplo é uma marca fictícia. Conteúdo, imagens, preços e dados comerciais são ilustrativos.",
+    "links": [
+      { "label": "Perguntas frequentes", "to": "#duvidas" },
+      { "label": "Contato", "to": "#contato" }
+    ]
+  }
+}

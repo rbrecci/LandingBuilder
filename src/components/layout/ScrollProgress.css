@@ -1,0 +1,25 @@
+.scroll-progress {
+  position: fixed;
+  z-index: 120;
+  inset: 0 0 auto;
+  block-size: 3px;
+  background: var(--color-accent);
+  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+@keyframes scroll-progress-grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll(root block)) {
+    .scroll-progress {
+      animation: scroll-progress-grow auto linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+}

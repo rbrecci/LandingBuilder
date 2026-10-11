@@ -1,0 +1,16 @@
+.contact-content {
+  display: grid;
+  gap: 2rem;
+}
+
+.contact-channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.contact-closing {
+  max-inline-size: 40rem;
+  font-size: clamp(1.25rem, 2.5vw, 2rem);
+  font-family: var(--font-display);
+}
