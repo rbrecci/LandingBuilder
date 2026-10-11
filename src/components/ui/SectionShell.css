@@ -1,0 +1,50 @@
+.section-shell {
+  padding-block: clamp(4rem, 9vw, 8rem);
+  background: var(--surface-light-bg);
+  color: var(--surface-light-fg);
+}
+
+.section-shell.tone-dark {
+  background: var(--surface-dark-bg);
+  color: var(--surface-dark-fg);
+}
+
+.section-shell.tone-brand {
+  background: var(--surface-brand-bg);
+  color: var(--surface-brand-fg);
+}
+
+.section-shell.tone-accent {
+  background: var(--surface-accent-bg);
+  color: var(--surface-accent-fg);
+}
+
+.section-shell__header {
+  max-inline-size: 52rem;
+  margin-block-end: clamp(2rem, 5vw, 4rem);
+}
+
+.section-shell__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-block-end: clamp(1.25rem, 3vw, 2rem);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.section-shell__count {
+  margin-inline-start: auto;
+  white-space: nowrap;
+}
+
+.section-shell__intro {
+  max-inline-size: 44rem;
+  margin-block-start: 1.25rem;
+  font-size: clamp(1rem, 0.9rem + 0.45vw, 1.25rem);
+  line-height: 1.6;
+}

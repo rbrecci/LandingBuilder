@@ -1,0 +1,38 @@
+.ui-button {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ui-button--primary {
+  background: var(--color-brand);
+  color: var(--color-brand-contrast);
+}
+
+.ui-button--ghost {
+  background: transparent;
+  color: inherit;
+}
+
+.ui-button--outline {
+  border-color: currentColor;
+  background: transparent;
+  color: inherit;
+}
+
+.ui-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

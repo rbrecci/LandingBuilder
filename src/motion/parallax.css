@@ -1,0 +1,36 @@
+[data-parallax] {
+  --p: 0.5;
+  --parallax-mobile-factor: 1;
+  translate: 0 calc((var(--p) - 0.5) * var(--speed) * var(--parallax-range) * var(--parallax-mobile-factor));
+}
+
+@media (max-width: 768px) {
+  [data-parallax] {
+    --parallax-mobile-factor: 0.5;
+  }
+}
+
+@supports ((animation-timeline: view()) and (animation-range: entry)) {
+  [data-parallax] {
+    animation: parallax-scroll linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+}
+
+@keyframes parallax-scroll {
+  from {
+    translate: 0 calc(-0.5 * var(--speed) * var(--parallax-range) * var(--parallax-mobile-factor));
+  }
+
+  to {
+    translate: 0 calc(0.5 * var(--speed) * var(--parallax-range) * var(--parallax-mobile-factor));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-parallax] {
+    animation: none;
+    translate: none;
+  }
+}
