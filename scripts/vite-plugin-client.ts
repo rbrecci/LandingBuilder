@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import type { Plugin } from 'vite'
+import { joinBase } from '../src/content/withBase.ts'
 import { contentSchema, type Content } from '../src/content/schema.ts'
 import { checkThemeContrast } from '../src/theme/contrast.ts'
 import { FONT_CATALOG } from '../src/theme/fonts.ts'
@@ -38,17 +39,17 @@ function parseTheme(input: unknown): Theme {
   return result.data
 }
 
-function renderHead(content: Content, theme: Theme) {
+function renderHead(content: Content, theme: Theme, base: string) {
   const { site, brand, business } = content
   const meta = [
     `<title>${escapeHtml(site.title)}</title>`,
     `<meta name="description" content="${escapeHtml(site.description)}">`,
     `<meta name="theme-color" content="${theme.colors.brand}">`,
-    `<link rel="icon" href="${escapeHtml(site.favicon)}">`,
+    `<link rel="icon" href="${escapeHtml(joinBase(site.favicon, base))}">`,
     '<meta property="og:type" content="website">',
     `<meta property="og:title" content="${escapeHtml(site.title)}">`,
     `<meta property="og:description" content="${escapeHtml(site.description)}">`,
-    `<meta property="og:image" content="${escapeHtml(site.url ? new URL(site.ogImage.slice(1), site.url).href : site.ogImage)}">`,
+    `<meta property="og:image" content="${escapeHtml(site.url ? new URL(site.ogImage.slice(1), site.url).href : joinBase(site.ogImage, base))}">`,
   ]
 
   if (site.url) {
@@ -89,6 +90,7 @@ function renderHead(content: Content, theme: Theme) {
 
 export default function clientPlugin(input: ClientInput = {}): Plugin {
   let root = process.cwd()
+  let base = '/'
 
   async function readClient(name: 'content' | 'theme') {
     if (input[name] !== undefined) return input[name]
@@ -99,6 +101,7 @@ export default function clientPlugin(input: ClientInput = {}): Plugin {
     name: 'landing-client',
     configResolved(config) {
       root = config.root
+      base = config.base
     },
     configureServer(server) {
       server.watcher.add(resolve(root, 'client', 'content.json'))
@@ -107,7 +110,7 @@ export default function clientPlugin(input: ClientInput = {}): Plugin {
       const content = parseContent(await readClient('content'))
       const theme = parseTheme(await readClient('theme'))
       if (!html.includes('<!--head-meta-->')) throw new Error('index.html: marcador <!--head-meta--> ausente')
-      return html.replace(/<title>[^<]*<\/title>/i, '').replace('<!--head-meta-->', renderHead(content, theme))
+      return html.replace(/<title>[^<]*<\/title>/i, '').replace('<!--head-meta-->', renderHead(content, theme, base))
     },
     resolveId(id) {
       if (id === fontsVirtualId) return resolvedFontsVirtualId

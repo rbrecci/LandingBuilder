@@ -64,13 +64,31 @@ const content = {
 
 const html = '<!doctype html><html lang="pt-BR"><head><!--head-meta--><title>Modelo de landing page</title></head><body></body></html>'
 
-async function transform(contentInput: unknown = content, themeInput: unknown = theme) {
-  const hook = clientPlugin({ content: contentInput, theme: themeInput }).transformIndexHtml
+async function transform(contentInput: unknown = content, themeInput: unknown = theme, base = '/') {
+  const plugin = clientPlugin({ content: contentInput, theme: themeInput })
+  const configResolved = plugin.configResolved as (config: { root: string; base: string }) => void
+  configResolved({ root: process.cwd(), base })
+  const hook = plugin.transformIndexHtml
   if (typeof hook !== 'function') throw new Error('Hook transformIndexHtml ausente')
   return hook.call({} as ThisParameterType<typeof hook>, html, {} as Parameters<typeof hook>[1])
 }
 
 describe('clientPlugin', () => {
+  it('aplica o base do Vite ao favicon', async () => {
+    const based = await transform(content, theme, '/LandingBuilder/')
+    const root = await transform()
+
+    expect(based).toContain('<link rel="icon" href="/LandingBuilder/client/favicon.svg">')
+    expect(root).toContain('<link rel="icon" href="/client/favicon.svg">')
+  })
+
+  it('aplica o base do Vite ao og:image sem URL do site', async () => {
+    const input = { ...content, site: { ...content.site, url: undefined } }
+    const result = await transform(input, theme, '/LandingBuilder/')
+
+    expect(result).toContain('<meta property="og:image" content="/LandingBuilder/client/capa.webp">')
+  })
+
   it('gera metadados e oculta dados não confirmados', async () => {
     const result = await transform()
     expect(result).toContain('<meta name="robots" content="noindex, nofollow">')
