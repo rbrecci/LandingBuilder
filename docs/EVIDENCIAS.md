@@ -42,12 +42,16 @@ Data: 2026-10-11. Medido sobre o commit `8eab90f` mais as melhorias finais (setu
 | `node scripts/check-text.ts client docs` | 0 | Nenhuma ocorrência proibida em `client` e `docs`. |
 | `node scripts/check-text.ts src tests e2e` | 0 | Nenhuma ocorrência proibida em `src`, `tests` e `e2e`. |
 
-## Não medido
+## Verificações manuais e publicação
 
-- Celular físico.
-- Leitor de tela.
-- Teclado em dispositivo real.
-- GPU real.
-- 3D animado e botões de girar avaliados por uma pessoa.
-- SEO com `site.indexable: true`.
-- Vigilância contínua de erros de console: a medição acima foi feita uma vez, por script avulso. A suíte e2e automatizada só vigia mensagens de hidratação, então um erro de console novo não reprova o CI.
+Data: 2026-10-11. Confirmação de Saker após os testes do modelo no commit `d27d4b2`.
+
+| Verificação | Resultado informado |
+|---|---|
+| Celular físico | Menu animado, navegação e rolagem conferidos; experiência aprovada. |
+| Acessibilidade manual | Teclado, fechamento com Escape, retorno do foco e leitor de tela conferidos; experiência aprovada. |
+| GitHub Actions | Verificações do push e publicação conferidas; execução aprovada. |
+
+## Próximo passo sugerido
+
+Personalizar o modelo para um cliente real, confirmar conteúdo e autorizações de recursos e validar o site publicado. Esse uso não faz parte da demonstração fictícia incluída neste repositório.

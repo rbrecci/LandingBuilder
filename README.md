@@ -66,5 +66,5 @@ Todos os direitos reservados, conforme o arquivo `LICENSE`. O repositório é p�
 
 - `client/` contém dados fictícios da Casa Exemplo. Não publique esses textos como informações reais de um cliente.
 - Os limites aprovados em 2026-10-11 são desempenho Lighthouse 75, acessibilidade e boas práticas 90, SEO 90 quando indexável, e 270 kB gzip para o grafo completo de `Scene`, incluindo imports dinâmicos alcançáveis. O JavaScript inicial continua limitado a 100 kB gzip. Consulte `docs/ARQUITETURA.md` e `docs/EVIDENCIAS.md` para os resultados verificados.
-- Testes automatizados não substituem validação em celular físico, leitor de tela, teclado e GPU real.
+- A validação manual do modelo base em celular, com leitor de tela e teclado, e a publicação pelo GitHub Actions foram confirmadas em 2026-10-11. Repita as verificações relevantes depois de personalizar uma landing para um cliente.
 - A configuração dos workflows é documentada em `.github/workflows/ci.yml` e `.github/workflows/deploy.yml`. A execução remota depende do GitHub Actions do repositório.

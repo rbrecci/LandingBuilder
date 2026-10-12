@@ -111,4 +111,4 @@ O GitHub Actions publica no GitHub Pages em push para `main` ou por disparo manu
 
 O critério aprovado em 2026-10-11 é até 100 kB gzip para o JavaScript inicial, até 270 kB gzip para o grafo completo de `Scene`, desempenho Lighthouse de pelo menos 75, acessibilidade e boas práticas de pelo menos 90, e SEO de pelo menos 90 quando o site for indexável. O tamanho de `Scene` soma imports estáticos e dinâmicos alcançáveis. A medição Lighthouse é feita por `npm run perf` e depende de Chrome disponível. Consulte `docs/EVIDENCIAS.md` para os resultados verificados.
 
-Os testes e a medição automatizada não verificam aparelho móvel físico, leitor de tela, navegação por teclado em dispositivo real ou renderização em GPU dedicada. Faça essa conferência antes de considerar esses ambientes validados.
+A validação manual do modelo base em celular, com teclado e leitor de tela, e a publicação pelo GitHub Actions foram confirmadas em 2026-10-11. A automação não substitui uma nova conferência depois de personalizar a landing para um cliente. Consulte `docs/EVIDENCIAS.md` para o estado atual.
