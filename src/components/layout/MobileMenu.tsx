@@ -58,12 +58,12 @@ export function MobileMenu({ items, activeSection, open, onClose, triggerRef }: 
     <div
       ref={menuRef}
       id="mobile-menu"
-      className="mobile-menu"
+      className={`mobile-menu${open ? ' is-open' : ''}`}
       role="dialog"
       aria-label="Menu de navegação"
       aria-modal="true"
       aria-hidden={!open}
-      hidden={!open}
+      inert={!open}
     >
       <div className="mobile-menu__top">
         <span>Explore</span>
@@ -72,12 +72,13 @@ export function MobileMenu({ items, activeSection, open, onClose, triggerRef }: 
         </button>
       </div>
       <nav aria-label="Navegação mobile">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <a
             key={item.id}
             href={`#${item.id}`}
             aria-current={activeSection === item.id ? 'location' : undefined}
             onClick={onClose}
+            style={{ transitionDelay: open ? `${index * 45}ms` : '0ms' }}
           >
             {item.label}
           </a>

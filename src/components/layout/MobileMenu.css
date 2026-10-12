@@ -10,10 +10,22 @@
   overscroll-behavior: contain;
   background: var(--surface-brand-bg);
   color: var(--surface-brand-fg);
+  visibility: hidden;
+  opacity: 0;
+  translate: 100% 0;
+  pointer-events: none;
+  transition:
+    translate 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 350ms ease,
+    visibility 0s linear 520ms;
 }
 
-.mobile-menu[hidden] {
-  display: none;
+.mobile-menu.is-open {
+  visibility: visible;
+  opacity: 1;
+  translate: 0 0;
+  pointer-events: auto;
+  transition-delay: 0s;
 }
 
 .mobile-menu__top {
@@ -41,6 +53,8 @@
 }
 
 .mobile-menu nav a {
+  opacity: 0;
+  translate: 1.25rem 0;
   padding: 0.75rem 0;
   border-block-end: 1px solid currentColor;
   font-family: var(--font-display);
@@ -48,9 +62,27 @@
   font-weight: 700;
   line-height: 1.1;
   text-decoration: none;
+  transition: opacity 320ms ease, translate 320ms ease;
+}
+
+.mobile-menu.is-open nav a {
+  opacity: 1;
+  translate: 0 0;
 }
 
 .mobile-menu nav a[aria-current] {
   text-decoration: underline;
   text-underline-offset: 0.12em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu,
+  .mobile-menu nav a {
+    transition: none;
+  }
+
+  .mobile-menu,
+  .mobile-menu nav a {
+    translate: none;
+  }
 }

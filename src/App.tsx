@@ -1,7 +1,7 @@
-import { Fragment } from 'react'
 import type { Content } from './content/schema.ts'
 import { Header } from './components/layout/Header.tsx'
 import { Footer } from './components/layout/Footer.tsx'
+import { Reveal } from './motion/Reveal.tsx'
 import { renderSection } from './sections/registry.ts'
 
 export function App({ content }: { content: Content }) {
@@ -15,9 +15,9 @@ export function App({ content }: { content: Content }) {
       <Header brand={content.brand} sections={content.sections} />
       <main id="conteudo" tabIndex={-1}>
         {enabledSections.map((section, index) => (
-          <Fragment key={section.id}>
+          <Reveal key={section.id}>
             {renderSection(section, index + 1, enabledSections.length, content)}
-          </Fragment>
+          </Reveal>
         ))}
       </main>
       <Footer brand={content.brand} business={content.business} footer={content.footer} />
