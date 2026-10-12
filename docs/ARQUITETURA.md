@@ -1,6 +1,6 @@
 # Arquitetura do modelo de landing
 
-Este documento decide como o modelo é construído. Fatos sobre os projetos de origem estão em `docs/ANALISE.md` (citados como `ANALISE §N`). A execução está em `docs/PLANO-TAREFAS.md`.
+Este documento decide como o modelo é construído. Fatos sobre os projetos de origem estão em `docs/ANALISE.md` (citados como `ANALISE §N`).
 
 ## 1. Requisitos e como cada um é atendido
 
@@ -32,7 +32,7 @@ Não avaliei Astro nem outros geradores estáticos: a comparação pedida era en
 
 ### 2.1 Pré-renderização
 
-Decisão: o build gera o HTML das seções com `react-dom/server` e o cliente faz `hydrateRoot`. O canvas 3D nunca é renderizado no servidor: o servidor entrega o pôster (imagem) e o cliente troca depois de montar. Regra para evitar divergência de hidratação: nenhuma decisão baseada em `matchMedia`, `window` ou WebGL pode ocorrer no primeiro render, só em `useEffect` (o Gremio decide no primeiro render, `GremioLanding/src/App.tsx:38-42`, o que desalinharia com HTML pré-renderizado). Critério de aceite: nenhum erro de hidratação no console em e2e. Ferramenta: `vite build --ssr` para o bundle de servidor e um script Node para escrever o HTML (a flag `--ssr` do `vite build` é documentada na CLI do Vite; a tarefa T50 confere com `npx vite build --help`).
+Decisão: o build gera o HTML das seções com `react-dom/server` e o cliente faz `hydrateRoot`. O canvas 3D nunca é renderizado no servidor: o servidor entrega o pôster (imagem) e o cliente troca depois de montar. Regra para evitar divergência de hidratação: nenhuma decisão baseada em `matchMedia`, `window` ou WebGL pode ocorrer no primeiro render, só em `useEffect` (o Gremio decide no primeiro render, `GremioLanding/src/App.tsx:38-42`, o que desalinharia com HTML pré-renderizado). Critério de aceite: nenhum erro de hidratação no console em e2e. Ferramenta: `vite build --ssr` para o bundle de servidor e um script Node para escrever o HTML (a flag `--ssr` do `vite build` é documentada na CLI do Vite).
 
 ### 2.2 Versões fixadas e confirmação no registro npm
 
@@ -55,9 +55,9 @@ Consultas feitas com `npm view <pacote> version time.modified license` em 11/10/
 | `@playwright/test` | 1.64.0 | 10/10/2026 | Apache-2.0 | e2e. Chromium já existe em `/opt/pw-browsers` neste ambiente |
 | `@axe-core/playwright` | 4.13.0 | 09/10/2026 | MPL-2.0 | checagem automática de acessibilidade |
 | `lighthouse` | 13.5.0 | 10/10/2026 | Apache-2.0 | medição. Instalei em diretório temporário e confirmei as flags `--only-categories`, `--output`, `--output-path`, `--form-factor`, `--chrome-flags`, `--preset` |
-| `@gltf-transform/core` | 4.5.1 | 28/09/2026 | MIT | API para gerar o GLB placeholder por código (T15) |
+| `@gltf-transform/core` | 4.5.1 | 28/09/2026 | MIT | API para gerar o GLB placeholder por código |
 | `@gltf-transform/cli` | 4.5.1 | 28/09/2026 | MIT | binário `gltf-transform`. Confirmei `optimize --compress meshopt\|draco\|quantize`, `--texture-compress`, `--texture-size`, `--simplify` |
-| `sharp` | 0.35.5 | 27/09/2026 | Apache-2.0 | gera WebP e PNG de placeholder. Binário nativo: se a instalação falhar no ambiente do worker, T15 reporta e não improvisa |
+| `sharp` | 0.35.5 | 27/09/2026 | Apache-2.0 | gera WebP e PNG de placeholder. Binário nativo: se a instalação falhar no ambiente do worker, a falha de instalação é reportada sem improvisar |
 | `eslint` | 10.12.0 | 02/10/2026 | MIT | com `@eslint/js` 10.0.1, `typescript-eslint` 8.71.1, `eslint-plugin-react-hooks` 7.1.1, `globals` 17.13.0 |
 | `@fontsource-variable/dm-sans`, `/outfit`, `/space-grotesk`, `/inter`, `/fraunces` | 5.3.0 cada | 19/07/2026 | OFL-1.1 | fontes locais variáveis |
 | `@fontsource/barlow-condensed` | 5.3.0 | 19/07/2026 | OFL-1.1 | fonte estática (pesos 700, 800, 900) usada no Gremio |
@@ -87,7 +87,7 @@ LandingBuilder/
     content.schema.json           gerado, não editar
     theme.schema.json             gerado, não editar
   public/
-    client/                     <- imagens, logo, GLB, og.jpg do cliente (no modelo, são placeholders gerados por script, T15)
+    client/                     <- imagens, logo, GLB, og.jpg do cliente (no modelo, são placeholders gerados por script)
   src/
     content/   schema.ts  links.ts  load.ts
     theme/     schema.ts  tokens.ts  fonts.ts  contrast.ts
@@ -326,8 +326,8 @@ Calibragem: em 2026-10-11, o coordenador autorizou revisar as metas após as med
 | Risco | Decisão |
 |---|---|
 | Hidratação divergente por decisão de ambiente no primeiro render | regra §2.1 e teste e2e de console |
-| `sharp` não instalar no sandbox dos workers | T15 é a única que usa; reporta falha, não substitui por outra lib |
-| Fontes do catálogo sem `wght.css` esperado | T11 confere o arquivo em `node_modules` antes de listar a fonte |
+| `sharp` não instalar no sandbox dos workers | É a única ferramenta que usa; reporta falha, sem substituir por outra lib |
+| Fontes do catálogo sem `wght.css` esperado | a verificação confere o arquivo em `node_modules` antes de listar a fonte |
 | Cliente trocar logo por imagem fora de proporção no medalhão | `medal.texture` aceita só PNG ou WebP quadrado; validado por dimensões |
 | Depoimentos e avaliações reais | não reproduzir sem autorização (`hitamax-landing/SPEC.md:41`); campo `consentConfirmed` |
 | Dados pessoais e CNPJ no rodapé | o schema não tem campo para nome de sócio; `footer.legal` é texto livre revisado pelo agente |
