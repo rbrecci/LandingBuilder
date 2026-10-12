@@ -58,6 +58,10 @@ O fluxo `.github/workflows/deploy.yml` publica no GitHub Pages quando há push p
 
 O rodapé contém o crédito fixo **Desenvolvido por RBrecci**, com link para [github.com/rbrecci](https://github.com/rbrecci). Esse crédito não é um campo de conteúdo e não pode ser removido por configuração.
 
+## Licença
+
+Todos os direitos reservados, conforme o arquivo `LICENSE`. O repositório é público para consulta e demonstração, e o uso comercial por cliente depende de autorização do titular. A marca fictícia "Casa Exemplo" da landing modelo é mantida como exemplo e é trocada por cliente em `client/content.json`.
+
 ## Limitações conhecidas
 
 - `client/` contém dados fictícios da Casa Exemplo. Não publique esses textos como informações reais de um cliente.
